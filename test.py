@@ -37,13 +37,28 @@ def test_input_cell():
             else:
                 col = int(line.rstrip())
 
-        try:
-            test.input_cell(row,col)
-            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-            print(test.board)
-            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-        except:
-            print("INVALID INPUT >:(")
+        #try:
+        test.input_cell(row,col)
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print(test.board)
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        #except:
+            #print("INVALID INPUT >:(")
             
     print("GAME OVER")
-test_input_cell()
+
+def test_get_shown_board():
+    test = Minesweeper(5,5,3)
+    test.set_board(3,3)
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print(test.board)
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print(test.get_shown_board())
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    test.input_cell(3,3)
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print(test.get_shown_board())
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+test_get_shown_board()

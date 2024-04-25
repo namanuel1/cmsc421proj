@@ -77,27 +77,41 @@ class Minesweeper:
             0 <= col < self.width:
 
             cell_val,cell_shown = self.board[row][col]
+            self.board[row][col] = (cell_val, SHOWN)
 
             # change values in current cell
-            
+            self.board[row][col] = (cell_val, SHOWN)
 
-            # if SHOWN, then pass
-            if cell_shown == HIDDEN:
-                row_pos = -1
-
-                # iterate through all surrounding cells
-
-                # increment by row
-                while row_pos < 2:
-                    col_pos = -1
-                    # go by cols
-                    while col_pos < 2:
-                        # show current cell
+            row_pos = -1
+            # iterate through all surrounding cells
+            # increment by row
+            while row_pos < 2:
+                col_pos = -1
+                # go by cols
+                while col_pos < 2:
+                    # show current cell if valid 
+                    if 0 <= row + row_pos < self.height and \
+                        0 <= col + col_pos < self.width:
                         curr_val, curr_shown = self.board[row + row_pos][col + col_pos]
-                        self.board[row + row_pos][col + col_pos] = (curr_val, SHOWN)
-                        # if the current is EMPTY, recursively iterate, else pass
-                        if curr_val == EMPTY:
-                            self.rec_input_cell(row + row_pos, col + col_pos)
-                        
-                        col_pos = col_pos + 1
-                    row_pos = row_pos + 1
+                        # if the current is EMPTY and HIDDEN, recursively iterate, else pass
+                        if curr_val == EMPTY and curr_shown == HIDDEN:
+                            self.board[row + row_pos][col + col_pos] = (curr_val, SHOWN)
+                            self.rec_input_cell(row + row_pos, col + col_pos)   
+                        self.board[row + row_pos][col + col_pos] = (curr_val, SHOWN)    
+                    col_pos = col_pos + 1
+                row_pos = row_pos + 1
+
+    def get_shown_board(self):
+        shown_board = np.copy(self.board)
+        for index_row, board_row in enumerate(self.board):
+            for index_col, board_cell in enumerate(board_row):
+                if board_cell:
+                    cell_val,cell_shown = self.board[index_row][index_col]
+
+                    if cell_shown == HIDDEN:
+                        shown_board[index_row][index_col] = 'U'
+                    elif cell_val == EMPTY:
+                        shown_board[index_row][index_col] = 'E'
+                    else: 
+                        shown_board[index_row][index_col] = cell_val
+        return shown_board
