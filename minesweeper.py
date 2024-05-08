@@ -6,7 +6,6 @@ class Minesweeper:
 
     def __init__(self, height, width, bombs):
         self.bombs = bombs
-        self.discovered = 0
         self.playing = True
         self.height = height
         self.width = width
@@ -96,7 +95,7 @@ class Minesweeper:
                         # if the current is EMPTY and HIDDEN, recursively iterate, else pass
                         if curr_val == EMPTY and curr_shown == HIDDEN:
                             self.board[row + row_pos][col + col_pos] = (curr_val, SHOWN)
-                            self.rec_input_cell(row + row_pos, col + col_pos)   
+                            self.rec_input_cell(row + row_pos, col + col_pos)
                         self.board[row + row_pos][col + col_pos] = (curr_val, SHOWN)    
                     col_pos = col_pos + 1
                 row_pos = row_pos + 1
@@ -110,8 +109,21 @@ class Minesweeper:
 
                     if cell_shown == HIDDEN:
                         shown_board[index_row][index_col] = 'U'
-                    elif cell_val == EMPTY:
-                        shown_board[index_row][index_col] = 'E'
                     else: 
                         shown_board[index_row][index_col] = cell_val
-        return shown_board
+        return shown_board.tolist()
+    
+    def check_win(self):
+        discovered = 0
+        for index_row, board_row in enumerate(self.board):
+            for index_col, board_cell in enumerate(board_row):
+                if board_cell:
+                    cell_val,cell_shown = self.board[index_row][index_col]
+
+                    if cell_shown == SHOWN:
+                        discovered = discovered + 1
+
+        if discovered >= (self.height * self.width) - self.bombs:
+            return True
+        else:
+            return False
