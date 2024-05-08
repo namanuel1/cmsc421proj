@@ -3,6 +3,7 @@ import random
 import sys
 from csp_minesweeper import *
 import numpy as np
+import wx
 
 # for print the CSP
 def print_board(csp):
@@ -11,6 +12,80 @@ def print_board(csp):
         for x_pos in range(csp.grid_width):
             row += " " + str(csp.grid_description[y_pos][x_pos]) + " "
         print(row + "\n")
+
+
+
+class MyFrame(wx.Frame):
+    def __init__(self, parent, title, row_size, column_size, bombs):
+        super(MyFrame, self).__init__(parent, title=title, size=(300, 300))
+        self.minesweeper = Minesweeper(row_size, column_size, bombs) 
+        self.minesweeper.set_board(row_size, column_size)  
+        self.panel = wx.Panel(self)
+        self.grid = wx.GridSizer(row_size, column_size, 0, 0) 
+        self.row = row_size
+        self.column = column_size
+        self.bombs = bombs
+
+        self.buttons = [[None for _ in range(row_size)] for _ in range(column_size)]
+        for row in range(row_size):
+            for col in range(column_size):
+                button = wx.Button(self.panel, id=wx.ID_ANY, label='', size=(30, 30))
+                self.grid.Add(button, 0, wx.EXPAND)
+                self.buttons[row][col] = button
+                button.Bind(wx.EVT_BUTTON, lambda event, r=row, c=col: self.on_button_click(event, r, c))
+
+        self.panel.SetSizer(self.grid)
+        self.Bind(wx.EVT_CLOSE, self.on_close)
+
+    def on_button_click(self, event, row, col):
+        self.minesweeper.input_cell(row, col)
+        playing = self.minesweeper.playing
+        winner = self.minesweeper.check_win()
+        if playing and not winner: 
+            self.update_display()
+            csp_board = self.minesweeper.get_shown_board()
+            csp_board = self.minesweeper.get_shown_board()
+            csp = CSP(row, col, csp_board)
+            csp.solve()
+            print_board(csp)
+            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        elif not playing and not winner: 
+            self.update_display()
+            wx.MessageBox('Boom! You hit a bomb!', 'Game Over', wx.OK | wx.ICON_ERROR)
+            self.Destroy()
+        elif not playing and winner: 
+            self.update_display()
+            wx.MessageBox('Congratulations! You have won!', 'Game Won', wx.OK | wx.ICON_INFORMATION)
+            self.Destroy()
+
+                
+  
+
+
+    def update_display(self):
+        csp_board = self.minesweeper.get_shown_board()
+        csp = CSP(self.row, self.column, csp_board)
+        csp.solve()
+        playing = self.minesweeper.playing
+        for row in range(self.row):
+            for col in range(self.column):
+                cell = self.minesweeper.get_shown_board()[row][col]
+                button = self.buttons[row][col]
+                if cell == 'U': 
+                    cell_csp = str(csp.grid_description[row][col])
+                    if cell_csp == 'X': 
+                        button.SetLabel('!')
+                    if cell_csp == 'O': 
+                        button.SetLabel('')
+                else:
+                    button.SetLabel(str(cell))
+                    button.Disable()
+
+
+    def on_close(self, event):
+        self.Destroy()
+
+
 
 
 def print_constraints(csp):
@@ -106,8 +181,15 @@ def test_game_csp():
             getting_valid_input = False
         except:
             print("ERROR, bomb time but as int this time")
-    getting_valid_input = True
 
+    getting_valid_input = True
+    app = wx.App(False)
+    frame = MyFrame(None, "Minesweeper", height, width, bombs)
+    frame.Show()
+    app.MainLoop()
+
+
+"""
     test = Minesweeper(height,width,bombs)
     print("~~~~~~~~~~~~~~~~~~~~~~~~")
     print("The Top is board and bottom is the csp")
@@ -185,5 +267,7 @@ def test_game_csp():
         print("YOU WINNNNN LETS GOOOO")
     else:
         print("GAMEOVER >:(")
+"""
     
 test_game_csp()
+
