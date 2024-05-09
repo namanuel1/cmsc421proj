@@ -45,15 +45,15 @@ class MyFrame(wx.Frame):
             self.update_display()
             csp_board = self.minesweeper.get_shown_board()
             csp_board = self.minesweeper.get_shown_board()
-            csp = CSP(row, col, csp_board)
+            csp = CSP(self.row, self.column, csp_board)
             csp.solve()
             print_board(csp)
             print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-        elif not playing and not winner: 
+        elif not playing: 
             self.update_display()
             wx.MessageBox('Boom! You hit a bomb!', 'Game Over', wx.OK | wx.ICON_ERROR)
             self.Destroy()
-        elif not playing and winner: 
+        elif winner: 
             self.update_display()
             wx.MessageBox('Congratulations! You have won!', 'Game Won', wx.OK | wx.ICON_INFORMATION)
             self.Destroy()
