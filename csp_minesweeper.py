@@ -210,7 +210,8 @@ class CSP:
     else:
       cells = [cell for cell in product(range(self.grid_width), range(self.grid_height))
                       if self.grid_description[cell[1]][cell[0]] == "U"]
-      return [("O", random.choice(cells))]
+      if cells:
+        return [("O", random.choice(cells))]
 
 
   #it updates the string board representation
